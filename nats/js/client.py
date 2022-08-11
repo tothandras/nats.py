@@ -963,7 +963,7 @@ class JetStreamContext(JetStreamManager):
     async def key_value(self, bucket: str) -> KeyValue:
         if VALID_BUCKET_RE.match(bucket) is None:
             raise InvalidBucketNameError
-        
+
         stream = KV_STREAM_TEMPLATE.format(bucket=bucket)
         try:
             si = await self.stream_info(stream)
@@ -991,7 +991,7 @@ class JetStreamContext(JetStreamManager):
         if config is None:
             config = api.KeyValueConfig(bucket=params["bucket"])
         config = config.evolve(**params)
-        
+
         if VALID_BUCKET_RE.match(config.bucket) is None:
             raise InvalidBucketNameError
 
@@ -1035,7 +1035,7 @@ class JetStreamContext(JetStreamManager):
         """
         if VALID_BUCKET_RE.match(bucket) is None:
             raise InvalidBucketNameError
-        
+
         stream = KV_STREAM_TEMPLATE.format(bucket=bucket)
         return await self.delete_stream(stream)
 
@@ -1048,10 +1048,10 @@ class JetStreamContext(JetStreamManager):
     async def object_store(self, bucket: str) -> ObjectStore:
         if VALID_BUCKET_RE.match(bucket) is None:
             raise InvalidBucketNameError
-        
+
         stream = OBJ_STREAM_TEMPLATE.format(bucket=bucket)
         try:
-            si = await self.stream_info(stream)
+            await self.stream_info(stream)
         except NotFoundError:
             raise BucketNotFoundError
 
@@ -1060,7 +1060,7 @@ class JetStreamContext(JetStreamManager):
             stream=stream,
             js=self,
         )
-        
+
     async def create_object_store(
         self,
         config: Optional[api.ObjectStoreConfig] = None,
@@ -1072,10 +1072,10 @@ class JetStreamContext(JetStreamManager):
         if config is None:
             config = api.ObjectStoreConfig(bucket=params["bucket"])
         config = config.evolve(**params)
-        
+
         if VALID_BUCKET_RE.match(config.bucket) is None:
             raise InvalidBucketNameError
-        
+
         name = config.bucket
         chunks = OBJ_ALL_CHUNKS_PRE_TEMPLATE.format(bucket=name)
         meta = OBJ_ALL_META_PRE_TEMPLATE.format(bucket=name)
@@ -1100,13 +1100,13 @@ class JetStreamContext(JetStreamManager):
             stream=stream.name,
             js=self,
         )
-        
+
     async def delete_object_store(self, bucket: str) -> bool:
         """
         delete_object_store will delete the underlying stream for the named object.
         """
         if VALID_BUCKET_RE.match(bucket) is None:
             raise InvalidBucketNameError
-        
+
         stream = OBJ_STREAM_TEMPLATE.format(bucket=bucket)
         return await self.delete_stream(stream)
