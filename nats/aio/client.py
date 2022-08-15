@@ -49,9 +49,9 @@ from nats.protocol.parser import (
     Parser,
 )
 
-from .errors import ErrInvalidUserCredentials, ErrStaleConnection
-from .msg import Msg
-from .subscription import (
+from nats.aio.errors import ErrInvalidUserCredentials, ErrStaleConnection
+from nats.aio.msg import Msg
+from nats.aio.subscription import (
     DEFAULT_SUB_PENDING_BYTES_LIMIT,
     DEFAULT_SUB_PENDING_MSGS_LIMIT,
     Subscription,
