@@ -1726,7 +1726,6 @@ class KVTest(SingleJetStreamServerTestCase):
 
         with pytest.raises(BadBucketError):
             await js.key_value(bucket="TEST3")
-<<<<<<< HEAD
 
 
 class OBJTest(SingleJetStreamServerTestCase):
