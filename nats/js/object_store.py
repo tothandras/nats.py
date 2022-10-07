@@ -47,7 +47,7 @@ OBJ_CHUNKS_PRE_TEMPLATE = "$O.{bucket}.C.{obj}"
 OBJ_META_PRE_TEMPLATE = "$O.{bucket}.M.{obj}"
 OBJ_NO_PENDING = "0"
 OBJ_DEFAULT_CHUNK_SIZE = 128 * 1024  # 128k
-OBJ_DIGEST_TYPE = "sha-256="
+OBJ_DIGEST_TYPE = "SHA-256="
 OBJ_DIGEST_TEMPLATE = OBJ_DIGEST_TYPE + "{digest}"
 
 
@@ -144,7 +144,7 @@ class ObjectStore:
         if not key_valid(obj):
             raise InvalidObjectNameError
 
-        meta = OBJ_META_PRE_TEMPLATE.format(bucket=self._name, obj=base64.urlsafe_b64encode(bytes(obj, "utf-8")).decode())
+        meta = OBJ_META_PRE_TEMPLATE.format(bucket=self._name, obj=base64.urlsafe_b64encode(bytes(obj, "utf-8")).decode().rstrip("="))
         stream = OBJ_STREAM_TEMPLATE.format(bucket=self._name)
 
         msg = await self._js.get_last_msg(stream, meta)
@@ -206,9 +206,7 @@ class ObjectStore:
 
                 # Make sure the digest matches.
                 sha = h.digest()
-                digest_str = info.digest.replace(OBJ_DIGEST_TYPE, "").replace(
-                    OBJ_DIGEST_TYPE.upper(), ""
-                )
+                digest_str = info.digest.replace(OBJ_DIGEST_TYPE, "")
                 rsha = base64.urlsafe_b64decode(digest_str)
                 if not sha == rsha:
                     raise DigestMismatchError
@@ -244,7 +242,7 @@ class ObjectStore:
         chunk_subj = OBJ_CHUNKS_PRE_TEMPLATE.format(
             bucket=self._name, obj=id.decode()
         )
-        meta_subj = OBJ_META_PRE_TEMPLATE.format(bucket=self._name, obj=base64.urlsafe_b64encode(bytes(obj, "utf-8")).decode())
+        meta_subj = OBJ_META_PRE_TEMPLATE.format(bucket=self._name, obj=base64.urlsafe_b64encode(bytes(obj, "utf-8")).decode().rstrip("="))
 
         try:
             h = sha256()
